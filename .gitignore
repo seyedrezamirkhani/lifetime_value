@@ -1,2 +1,6 @@
 .ipynb_checkpoints
 __pycache__
+
+notebooks/kdd_cup_98/tmp/
+notebooks/kdd_cup_98/result/
+notebooks/kdd_cup_98/*.png
