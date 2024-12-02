@@ -1,3 +1,38 @@
+# Updating project to work with TensorFlow 2.18
+
+This repo is created as a fork of the [Customer Lifetime Value](https://github.com/google/lifetime_value) project from google. A pull request for these changes has been created. The changes in this repo enable the use of TensorFlow 2.18.
+
+The code has has been tested using the Ubuntu 24 operating system running Python 3.12 and the NVIDIA RTX A5000 graphics card.
+
+## List of changes
+
+- updated package name from sklearn to scikit-learn in Setup.py
+
+- updated notebooks from the notebook folder to:
+
+  - use a DATA_FOLDER variable for location of input and output files.
+
+  - replaced `%%script` blocks with `%%bash` since `%%script` is no longer supported.
+
+  - added an extra dimension for y_train and y_eval during the fit call to 
+make them 2-dimensional arrays. Without this, the zlin loss (ltv.zero_inflated_lognormal_loss)
+will fail as it has a checks for target variable being two dimensional.
+
+  - removed quote characters around the company variable in calls to the pandas *query* 
+function in notebooks of the  *kaggle_acquire_valued_shoppers_challenge* folder. This may 
+have worked in previous versions of pandas, but it silently returns an empty dataframe if
+a string is used as a query value against a numeric column.
+
+  - replaced referenced to LinearModel with a Sequential linear model as this class is longer supported.
+
+  - moved the numeric input field in kdd_cup_98/regression.ipynb to the last parameter.
+Due to the shape of this parameter (21,) and the presence of other features, if this 
+paramter is not the last, TensorFlow throws an error during the call to the *fit* method.
+ 
+- added environment.yml to save packages used in the conda environment used to build this project. This includes NVIDIA libraries.
+
+- added requirements.txt file.
+
 # Lifetime Value
 
 Accurate predictions of customers’ lifetime value (LTV) given their attributes
@@ -32,20 +67,20 @@ A Deep Probabilistic Model for Customer Lifetime Value Prediction.
 The easiest way is propably using pip:
 
 ```
-pip install -q git+https://github.com/google/lifetime_value
+pip install -q git+https://github.com/seyedrezamirkhani/lifetime_value
 ```
 
 If you are using a machine without admin rights, you can do:
 
 ```
-pip install -q git+https://github.com/google/lifetime_value --user
+pip install -q git+https://github.com/seyedrezamirkhani/lifetime_value --user
 ```
 
 If you are using [Google Colab](https://colab.research.google.com/), just add
 "!" to the beginning:
 
 ```
-!pip install -q git+https://github.com/google/lifetime_value
+!pip install -q git+https://github.com/seyedrezamirkhani/lifetime_value
 ```
 
 Package works for python 3 only.
