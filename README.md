@@ -33,6 +33,45 @@ paramter is not the last, TensorFlow throws an error during the call to the *fit
 
 - added requirements.txt file.
 
+## TLDR
+
+### kaggle acquire valued shoppers challenge
+
+There are three notebooks in the folder *notebooks/kaggle_acquire_valued_shoppers_challenge*
+
+- **preprocess_data.ipynb** has the code for processing the raw transaction file
+to build company specific feature files. This code is repeated in the other two
+notebooks. The preprocessing involves:
+
+  - Filtering of all records.  Only select transactions with positive values; this excludes all returns which have a negative value. So the label won't reflect the returns nor will the calibration value
+
+  - Generating the calibration value. Sum up the total purchase amount for the first day of shopping.
+	
+  - Generating calibration attributes. Take the most expensive transaction and select its
+		'chain', 'dept', 'category', 'brand', 'productmeasure' values for the first day of shopping. Note, all other transactions are ignored. Any null values for these attributes are replaced by UNKNOWN.
+
+  - Generating the  label/holdout value. This is the total amount purchased by a customer in one year
+
+The zero_inflated_lognormal_loss function used by both regression and classification notebooks, requires three inputs which are generated as the three output nodes of these models.
+
+- **regression.ipynb** 
+
+To predict using a regression model, call the intial predict function followed by a call to the *zero_inflated_lognormal_pred* function, passing it all three output node values e.g.
+
+```
+logits = model.predict(x=x_eval, batch_size=1024)
+y_pred = ltv.zero_inflated_lognormal_pred(logits).numpy().flatten()
+  ```
+
+- **classification.ipynb**
+
+To predict using a classification model, call the intial predict function followed by a call to the sigmoid function passing it the values of the first of the three output node values e.g.
+
+```
+logits = model.predict(x=x_eval, batch_size=1024)
+y_pred = K.sigmoid(logits[..., :1]).numpy().flatten()
+```
+
 # Lifetime Value
 
 Accurate predictions of customers’ lifetime value (LTV) given their attributes
